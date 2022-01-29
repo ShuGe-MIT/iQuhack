@@ -10,7 +10,9 @@ extraheight = 100
 fps = 15
 running_time = pg.time.Clock()
 
-board = [(None, None), (None, None), (None, None), (None, None), (None, None), (None, None), (None, None), (None, None), (None, None)]
+board = [[None, None], [None, None], [None, None], [None, None], [None, None], [None, None], [None, None], [None, None], [None, None]]
+
+color=1
 
 pg.init()
 
@@ -18,11 +20,9 @@ screen = pg.display.set_mode((width, height + extraheight), 0, 32)
 pg.display.set_caption("Quantum Tic Tac Toe")
 
 # loading the images as python object
-initiating_window = pg.image.load("initial_cover.png")
+initiating_window = pg.image.load("plus.png")
 x_img = pg.image.load("x.png")
 o_img = pg.image.load("o.png")
-plus_img=pg.image.load("plus.png")
-minus_img = pg.image.load("minus.png")
 ox_img = pg.image.load("ox.png")
 xo_img = pg.image.load("xo.png")
 
@@ -30,8 +30,6 @@ xo_img = pg.image.load("xo.png")
 initiating_window = pg.transform.scale(initiating_window, (width, height + extraheight))
 x_img = pg.transform.scale(x_img, (80, 80))
 o_img = pg.transform.scale(o_img, (80, 80))
-plus_img = pg.transform.scale(plus_img, (80, 80))
-minus_img = pg.transform.scale(minus_img, (80, 80))
 ox_img = pg.transform.scale(ox_img, (80, 80))
 xo_img = pg.transform.scale(xo_img, (80, 80))
 
@@ -56,10 +54,10 @@ def game_initiating_window():
     # add in the initial board
     for i in range(9):
         draw_img(i, "plus", (255, 255, 255))
-    draw_status()
+    # draw_status()
     
 
-def draw_img(index, img, color):
+def draw_img(index,img, color):
     '''
     Updates the respective cell with image and background color
     '''
@@ -70,17 +68,10 @@ def draw_img(index, img, color):
     posx = x_coord * width/100 + 30
     posy = y_coord * height/100 + 30
 
-    board[index][0] = img
-    board[index][1] = color
-
     if img == "x":
         commit_img = x_img
     elif img == "o":
         commit_img = o_img
-    elif img == "plus":
-        commit_img = plus_img
-    elif img == "minus":
-        commit_img = minus_img
     elif img == "ox":
         commit_img = ox_img
     elif img == "xo":
@@ -96,22 +87,53 @@ def draw_img(index, img, color):
 
 ## moves
 def plus2o(i):
-	if board[i]=="plus":
-		board[i]="o"
-		return [("hadamard", i)]
-	else:
-		return False
+    if board[i][0]=="ox" and board[i][1]==0:
+        board[i][0]="o"
+        draw_img(i,"o", 0)
+        return [("hadamard", i)]
+    else:
+        return False
 
 def plus2x(i):
-	if board[i]=="minus":
-		board[i]="o"
-		return [("sigmaz", i),("hadamard", i)]
+    if board[i][0]=="ox" and board[i][1]==0:
+        board[i][0]="x"
+        draw_img(i,"x", 0)
+        return [("sigmaz", i),("hadamard", i)]
 
 def teleport(i,j):
-	pass
+    board[j]=board[i][:]
+    draw_img(j,board[j][0], board[j][1])
+    return [("teleport",i,j)]
+
+def flip(state):
+    if state=="o": return "x"
+    elif state=="x": return "o"
+    elif state=="ox": return "xo"
+    elif state=="xo": return "ox"
 
 def cnot(i,j):
-	if board[j]=="o" or board[j]=="x":
-		pass
-	pass
+    global color
+    
+    if (len(board[j][0])==1):
+        if board[i][0]=="x":
+            board[j][0]=flip(board[j][0])
+        else:
+            # udpate state
+            if board[j][0]=="x":
+                board[j][0]=flip(board[i][0])
+            else:
+                board[j][0]=board[i][0]
+
+            # update color
+            if board[i][1]==0:
+                board[i][1]=color
+                board[j][1]=color
+                color+=1
+                draw_img(i,board[i][0], board[i][1])
+            else:
+                board[j][1]=board[i][1]
+        draw_img(j,board[j][0], board[j][1])
+        return [("cnot",i,j)]
+    return False
+
 
