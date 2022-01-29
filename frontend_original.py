@@ -4,6 +4,7 @@ import sys
 import time
 from pygame.locals import *
 
+
 width = 400
 height = 400
 extraheight = 100
@@ -25,6 +26,7 @@ x_img = pg.image.load("x.png")
 o_img = pg.image.load("o.png")
 ox_img = pg.image.load("ox.png")
 xo_img = pg.image.load("xo.png")
+plus_img = pg.image.load("plus.png")
 
 # rescale window
 initiating_window = pg.transform.scale(initiating_window, (width, height + extraheight))
@@ -53,9 +55,9 @@ def game_initiating_window():
 
     # add in the initial board
     for i in range(9):
-        draw_img(i, "plus", (255, 255, 255))
+        draw_img(i, "ox", (255, 255, 255))
     # draw_status()
-    
+
 
 def draw_img(index,img, color):
     '''
@@ -73,7 +75,10 @@ def draw_img(index,img, color):
     elif img == "o":
         commit_img = o_img
     elif img == "ox":
-        commit_img = ox_img
+        if color == (255, 255, 255):
+            commit_img = plus_img
+        else:
+            commit_img = ox_img
     elif img == "xo":
         commit_img = xo_img
 
@@ -135,5 +140,22 @@ def cnot(i,j):
         draw_img(j,board[j][0], board[j][1])
         return [("cnot",i,j)]
     return False
+
+
+
+# run the game
+# initiate the game
+game_initiating_window()
+
+while(True):
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            pg.quit()
+            sys.exit()
+        elif any(pg.mouse.get_pressed()):
+            print("drawing")
+            # user_click()
+    pg.display.update()
+    running_time.tick(fps)
 
 
