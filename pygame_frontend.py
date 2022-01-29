@@ -4,6 +4,34 @@ import sys
 import time
 from pygame.locals import *
 
+o_state=[]
+x_state=[]
+plus_state=[]
+minus_state=[]
+ooxx_state=[]
+xoox_state=[]
+
+def plus2o(i):
+	if board[i]=="plus":
+		board[i]="o"
+		return [("hadamard", i)]
+	else:
+		return False
+
+def plus2x(i):
+	if board[i]=="minus":
+		board[i]="o"
+		return [("sigmaz", i),("hadamard", i)]
+
+def teleport(i,j):
+	pass
+
+def cnot(i,j):
+	if board[j]=="o" or board[j]=="x":
+		pass
+	pass
+
+
 # declaring the global variables
 
 # for storing the 'x' or 'o'
@@ -55,8 +83,6 @@ pg.display.set_caption("My Tic Tac Toe")
 
 # loading the images as python object
 initiating_window = pg.image.load("modified_cover.png")
-# x_img = pg.image.load("X_modified.png")
-# y_img = pg.image.load("o_modified.png")
 x_img = pg.image.load("x.png")
 o_img = pg.image.load("o.png")
 plus_img=pg.image.load("plus.png")
@@ -251,6 +277,8 @@ def reset_game():
 	game_initiating_window()
 	winner = None
 	board = [[None]*3, [None]*3, [None]*3]
+
+def 
 
 game_initiating_window()
 
