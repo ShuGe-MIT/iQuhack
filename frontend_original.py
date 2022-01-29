@@ -100,13 +100,24 @@ def draw_img(index,img, color):
 
 # TBD: draw_button and clear
 def draw_button(gate):
-    if gate=="all":
+    if gate=="plus2o":
+        pass
+    elif gate=="plus2x":
+        pass
+    elif gate=="cnot":
         pass
     elif gate=="teleport":
         pass
 
 def clear(gate):
-    pass
+    if gate=="plus2o":
+        pass
+    elif gate=="plus2x":
+        pass
+    elif gate=="cnot":
+        pass
+    elif gate=="teleport":
+        pass
 
 
 ## moves
@@ -191,7 +202,10 @@ def user_click():
             if not twoq_gate:
                 choice_1=i
                 if len(board[i][0])==1:
-                    draw_button("all")
+                    draw_button("plus2o")
+                    draw_button("plus2x")
+                    draw_button("cnot")
+                    draw_button("teleport")
                 else:
                     draw_button("teleport")
             elif choice_1>=0:
