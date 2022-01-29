@@ -55,13 +55,24 @@ pg.display.set_caption("My Tic Tac Toe")
 
 # loading the images as python object
 initiating_window = pg.image.load("modified_cover.png")
-x_img = pg.image.load("X_modified.png")
-y_img = pg.image.load("o_modified.png")
+# x_img = pg.image.load("X_modified.png")
+# y_img = pg.image.load("o_modified.png")
+x_img = pg.image.load("1.png")
+o_img = pg.image.load("0.png")
+xo_img = pg.image.load("0+1.png")
+xxoo_img = pg.image.load("00+11.png")
+xoox_img = pg.image.load("01+10.png")
+
 
 # resizing images
 initiating_window = pg.transform.scale(initiating_window, (width, height + 100))
+# x_img = pg.transform.scale(x_img, (80, 80))
+# o_img = pg.transform.scale(y_img, (80, 80))
 x_img = pg.transform.scale(x_img, (80, 80))
-o_img = pg.transform.scale(y_img, (80, 80))
+o_img = pg.transform.scale(o_img, (80, 80))
+xo_img = pg.transform.scale(xo_img, (80, 80))
+xxoo_img = pg.transform.scale(xxoo_img, (80, 80))
+xoox_img = pg.transform.scale(xoox_img, (80, 80))
 
 def game_initiating_window():
 	
