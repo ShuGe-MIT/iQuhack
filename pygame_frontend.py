@@ -11,25 +11,7 @@ minus_state=[]
 ooxx_state=[]
 xoox_state=[]
 
-def plus2o(i):
-	if board[i]=="plus":
-		board[i]="o"
-		return [("hadamard", i)]
-	else:
-		return False
 
-def plus2x(i):
-	if board[i]=="minus":
-		board[i]="o"
-		return [("sigmaz", i),("hadamard", i)]
-
-def teleport(i,j):
-	pass
-
-def cnot(i,j):
-	if board[j]=="o" or board[j]=="x":
-		pass
-	pass
 
 
 # declaring the global variables
@@ -183,7 +165,14 @@ def check_win():
 	if(all([all(row) for row in board]) and winner is None ):
 		draw = True
 	draw_status()
-	
+
+
+# def drawXO(index, image, color):
+# 	global board, XO
+
+# 	# changes board
+
+
 def drawXO(row, col):
 	global board, XO
 	
@@ -277,8 +266,6 @@ def reset_game():
 	game_initiating_window()
 	winner = None
 	board = [[None]*3, [None]*3, [None]*3]
-
-def 
 
 game_initiating_window()
 
