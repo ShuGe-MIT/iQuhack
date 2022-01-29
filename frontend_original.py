@@ -1,4 +1,5 @@
 
+from tkinter import E
 import pygame as pg
 import sys
 import time
@@ -14,6 +15,11 @@ running_time = pg.time.Clock()
 board = [[None, None], [None, None], [None, None], [None, None], [None, None], [None, None], [None, None], [None, None], [None, None]]
 
 color=1
+
+choice_1=-1
+choice_2=-1
+twoq_gate=""
+
 
 pg.init()
 
@@ -47,6 +53,10 @@ def game_initiating_window():
     pg.draw.line(screen, (0, 0, 0), (width / 3 * 2, 0), (width / 3 * 2, height), 7)
     pg.draw.line(screen, (0, 0, 0), (0, height / 3), (width, height / 3), 7)
     pg.draw.line(screen, (0, 0, 0), (0, height / 3 * 2), (width, height / 3 * 2), 7)
+
+    pg.draw.line(screen, (0,0,0), (width/4 , height), (width/4 , height+extraheight), 7)
+    pg.draw.line(screen, (0,0,0), (width/4*2 , height), (width/4*2 , height+extraheight), 7)
+    pg.draw.line(screen, (0,0,0), (width/4*3 , height), (width/4*3 , height+extraheight), 7)
 
     pg.display.update()
 
@@ -88,6 +98,15 @@ def draw_img(index,img, color):
 
     pg.display.update()
 
+# TBD: draw_button and clear
+def draw_button(gate):
+    if gate=="all":
+        pass
+    elif gate=="teleport":
+        pass
+
+def clear(gate):
+    pass
 
 
 ## moves
@@ -142,6 +161,68 @@ def cnot(i,j):
         draw_img(j,board[j][0], board[j][1])
         return [("cnot",i,j)]
     return False
+
+## handle user click
+def user_click():
+    global choice_1, twoq_gate, choice_2
+    # get coordinates of mouse click
+    x, y = pg.mouse.get_pos()
+    # get column of mouse click (1-3)
+    if y<height:
+        if(x<width / 3):
+            col = 1
+        elif (x<width / 3 * 2):
+            col = 2
+        elif(x<width):
+            col = 3
+        else:
+            col = None
+        # get row of mouse click (1-3)
+        if(y<height / 3):
+            row = 1
+        elif (y<height / 3 * 2):
+            row = 2
+        elif(y<height):
+            row = 3
+        else:
+            row = None
+        if col!=None and row!=None:
+            i=(col-1)*3+(row-1)
+            if not twoq_gate:
+                choice_1=i
+                if len(board[i][0])==1:
+                    draw_button("all")
+                else:
+                    draw_button("teleport")
+            elif choice_1>=0:
+                if twoq_gate=="teleport":
+                    teleport(choice_1,choice_2)
+                    clear()
+                    choice_1=-1
+                    choice_2=-1
+                elif twoq_gate=="cnot":
+                    cnot(choice_1,choice_2)
+                    clear()
+                    choice_1=-1
+                    choice_2=-1
+
+
+    else:
+        if(x<width / 4) and choice_1>=0:
+            plus2o(choice_1)
+            clear()
+            choice_1=-1
+        elif (x<width / 4 * 2):
+            plus2x(choice_1)
+            clear()
+            choice_1=-1
+        elif(x<width / 4 * 3):
+            button = "cnot"
+            twoq_gate="cnot"
+        else:
+            button =  "teleport"
+            twoq_gate="teleport"
+
 
 
 
