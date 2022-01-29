@@ -38,7 +38,7 @@ xo_img = pg.transform.scale(xo_img, (80, 80))
 def game_initiating_window():
     screen.blit(initiating_window, (0, 0))
     pg.display.update()
-    time.sleep(1)
+    time.sleep(3)
     screen.fill((255, 255, 255))
     pg.display.update()
 
@@ -51,7 +51,7 @@ def game_initiating_window():
     pg.display.update()
 
     # sleep for 1 seconds
-    time.sleep(1)
+    time.sleep(2)
 
     # add in the initial board
     for i in range(9):
@@ -67,9 +67,9 @@ def draw_img(index,img, color):
 
     x_coord = index % 3
     y_coord = index // 3
-    posx = x_coord * width/100 + 30
-    posy = y_coord * height/100 + 30
-
+    posx = x_coord * width/3 + 20
+    posy = y_coord * height/3 + 20
+    print(posx, posy)
     if img == "x":
         commit_img = x_img
     elif img == "o":
@@ -147,12 +147,14 @@ def cnot(i,j):
 # initiate the game
 game_initiating_window()
 
-while(True):
+run = True
+while(run):
     for event in pg.event.get():
         if event.type == pg.QUIT:
+            run = False
             pg.quit()
             sys.exit()
-        elif any(pg.mouse.get_pressed()):
+        elif event.type == pg.MOUSEBUTTONDOWN:
             print("drawing")
             # user_click()
     pg.display.update()
