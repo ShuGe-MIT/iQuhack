@@ -4,18 +4,9 @@ import sys
 import time
 from pygame.locals import *
 
-# declaring the global variables
 
-# for storing the 'x' or 'o'
-# value as character
-XO = 'x'
 
-# storing the winner's value at
-# any instant of code
-winner = None
 
-# to check if the game is a draw
-draw = None
 
 # to set width of the game window
 width = 400
@@ -33,7 +24,7 @@ white = (255, 255, 255)
 line_color = (0, 0, 0)
 
 # setting up a 3 * 3 board in canvas
-board = [[None]*3, [None]*3, [None]*3]
+board = [None, None, None, None, None, None, None, None, None]
 
 
 # initializing the pygame window
@@ -119,50 +110,33 @@ def draw_status():
 	text_rect = text.get_rect(center =(width / 2, 500-50))
 	screen.blit(text, text_rect)
 	pg.display.update()
+
+def drawXO(index, img, color):
+	global board
+	# changes the state at index i with the given image and color
+
+	x_coord = index % 3
+	y_coord = index // 3
+	posx = x_coord*width/3 + 30
+	posy = y_coord*height/3 + 30
+
+	board[index][0] = img
+
+	if img=="x":
+		commit_img = x_img
+	elif img == "o":
+		commit_img = o_img
+	elif img == "ox":
+		commit_img = ox_img
+	elif img == "xo":
+		commit_img = xo_img
+	elif img == "plus":
+		commit_img = plus_img
+	elif img == "minus":
+		commit_img = minus_img
 	
-def check_win():
-	global board, winner, draw
-
-	# checking for winning rows
-	for row in range(0, 3):
-		if((board[row][0] == board[row][1] == board[row][2]) and (board [row][0] is not None)):
-			winner = board[row][0]
-			pg.draw.line(screen, (250, 0, 0),
-						(0, (row + 1)*height / 3 -height / 6),
-						(width, (row + 1)*height / 3 - height / 6 ),
-						4)
-			break
-
-	# checking for winning columns
-	for col in range(0, 3):
-		if((board[0][col] == board[1][col] == board[2][col]) and (board[0][col] is not None)):
-			winner = board[0][col]
-			pg.draw.line (screen, (250, 0, 0), ((col + 1)* width / 3 - width / 6, 0), \
-						((col + 1)* width / 3 - width / 6, height), 4)
-			break
-
-	# check for diagonal winners
-	if (board[0][0] == board[1][1] == board[2][2]) and (board[0][0] is not None):
-		
-		# game won diagonally left to right
-		winner = board[0][0]
-		pg.draw.line (screen, (250, 70, 70), (50, 50), (350, 350), 4)
-		
-	if (board[0][2] == board[1][1] == board[2][0]) and (board[0][2] is not None):
-		
-		# game won diagonally right to left
-		winner = board[0][2]
-		pg.draw.line (screen, (250, 70, 70), (350, 50), (50, 350), 4)
-
-	if(all([all(row) for row in board]) and winner is None ):
-		draw = True
-	draw_status()
 
 
-# def drawXO(index, image, color):
-# 	global board, XO
-
-# 	# changes board
 
 
 def drawXO(row, col):
@@ -197,7 +171,7 @@ def drawXO(row, col):
 		
 	# setting up the required board
 	# value to display
-	board[row-1][col-1] = XO
+	board[index][0] = img
 	
 	if(XO == 'x'):
 		
