@@ -101,11 +101,13 @@ def plus2x(i):
         return [("sigmaz", i),("hadamard", i)]
 
 def teleport(i,j):
+    board[i]=["ox",0]
     board[j]=board[i][:]
+    draw_img(i,board[i][0],board[i][1])
     draw_img(j,board[j][0], board[j][1])
     return [("teleport",i,j)]
 
-def flip(state):
+def flip_(state):
     if state=="o": return "x"
     elif state=="x": return "o"
     elif state=="ox": return "xo"
@@ -116,11 +118,11 @@ def cnot(i,j):
     
     if (len(board[j][0])==1):
         if board[i][0]=="x":
-            board[j][0]=flip(board[j][0])
+            board[j][0]=flip_(board[j][0])
         else:
             # udpate state
             if board[j][0]=="x":
-                board[j][0]=flip(board[i][0])
+                board[j][0]=flip_(board[i][0])
             else:
                 board[j][0]=board[i][0]
 
