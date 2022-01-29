@@ -1,5 +1,4 @@
 
-from tkinter import E
 import pygame as pg
 import sys
 import time
@@ -36,15 +35,16 @@ plus_img = pg.image.load("plus.png")
 
 # rescale window
 initiating_window = pg.transform.scale(initiating_window, (width, height + extraheight))
-x_img = pg.transform.scale(x_img, (80, 80))
-o_img = pg.transform.scale(o_img, (80, 80))
-ox_img = pg.transform.scale(ox_img, (80, 80))
-xo_img = pg.transform.scale(xo_img, (80, 80))
+x_img = pg.transform.scale(x_img, (90, 90))
+o_img = pg.transform.scale(o_img, (90, 90))
+ox_img = pg.transform.scale(ox_img, (90, 90))
+xo_img = pg.transform.scale(xo_img, (90, 90))
+plus_img = pg.transform.scale(plus_img, (90, 90))
 
 def game_initiating_window():
     screen.blit(initiating_window, (0, 0))
     pg.display.update()
-    time.sleep(3)
+    time.sleep(0.1)
     screen.fill((255, 255, 255))
     pg.display.update()
 
@@ -61,11 +61,11 @@ def game_initiating_window():
     pg.display.update()
 
     # sleep for 1 seconds
-    time.sleep(2)
+    time.sleep(0.1)
 
     # add in the initial board
     for i in range(9):
-        draw_img(i, "ox", (255, 255, 255))
+        draw_img(i, "ox", (255, 255, 0))
     # draw_status()
 
 
@@ -92,6 +92,7 @@ def draw_img(index,img, color):
     elif img == "xo":
         commit_img = xo_img
 
+    pg.draw.rect(screen, color, pg.Rect(posx-15, posy-15, 125, 125))
     screen.blit(commit_img, (posx, posy))
 
     # TBD, update the background color of the cell
