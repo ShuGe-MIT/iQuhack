@@ -20,6 +20,9 @@ choice_1=-1
 choice_2=-1
 twoq_gate=""
 
+steps=0
+gates=[]
+
 
 pg.init()
 
@@ -122,25 +125,31 @@ def clear(gate):
 
 ## moves
 def plus2o(i):
+    global gates, steps
     if board[i][0]=="ox" and board[i][1]==0:
         board[i][0]="o"
         draw_img(i,"o", 0)
-        return [("hadamard", i)]
+        steps+=1
+        gates+=[("hadamard", i)]
     else:
         return False
 
 def plus2x(i):
+    global gates, steps
     if board[i][0]=="ox" and board[i][1]==0:
         board[i][0]="x"
         draw_img(i,"x", 0)
-        return [("sigmaz", i),("hadamard", i)]
+        steps+=1
+        gates+= [("sigmaz", i),("hadamard", i)]
 
 def teleport(i,j):
+    global gates, steps
     board[i]=["ox",0]
     board[j]=board[i][:]
     draw_img(i,board[i][0],board[i][1])
     draw_img(j,board[j][0], board[j][1])
-    return [("teleport",i,j)]
+    steps+=1
+    gates+= [("teleport",i,j)]
 
 def flip_(state):
     if state=="o": return "x"
@@ -149,7 +158,7 @@ def flip_(state):
     elif state=="xo": return "ox"
 
 def cnot(i,j):
-    global color
+    global color, gates, steps
     
     if (len(board[j][0])==1):
         if board[i][0]=="x":
@@ -170,7 +179,8 @@ def cnot(i,j):
             else:
                 board[j][1]=board[i][1]
         draw_img(j,board[j][0], board[j][1])
-        return [("cnot",i,j)]
+        steps+=1
+        gates+= [("cnot",i,j)]
     return False
 
 ## handle user click
@@ -231,13 +241,68 @@ def user_click():
             clear()
             choice_1=-1
         elif(x<width / 4 * 3):
-            button = "cnot"
             twoq_gate="cnot"
         else:
-            button =  "teleport"
             twoq_gate="teleport"
 
 
+# TODO: send sequence of moves to backend
+def send(): pass
+
+def draw_res(res): 
+    for i,r in enumerate(res):
+        if r==0:
+            draw_img(i,"o",0)
+        else:
+            draw_img(i,"x",0)
+
+def draw_status(winner):
+	
+	# getting the global variable draw
+	# into action
+	global draw
+	
+	if winner!="draw":
+		message = winner + " won !"
+	else:
+		message = "Game Draw !"
+
+	# setting a font object
+	font = pg.font.Font(None, 30)
+	
+	# setting the font properties like
+	# color and width of the text
+	text = font.render(message, 1, (255, 255, 255))
+
+	# copy the rendered message onto the board
+	# creating a small block at the bottom of the main display
+	screen.fill ((0, 0, 0), (0, 400, 500, 100))
+	text_rect = text.get_rect(center =(width / 2, 500-50))
+	screen.blit(text, text_rect)
+	pg.display.update()
+
+def check_winner(res):
+    cnt1=0
+    cnt2=0
+    def check(i,j,k):
+        nonlocal cnt1, cnt2
+        if res[i]==res[j]==res[k]:
+            if res[0]=="o":
+                cnt1+=1
+            else:
+                cnt2+=1
+    for i in range(3):
+        check(i,i+3,i+3)
+        check(i*3,i*3+1,i*3+2)
+    check(0,4,8)
+    check(2,4,6)
+
+    if cnt1==cnt2:
+        draw_status("draw")
+    elif cnt1>cnt2:
+        draw_status("o")
+    else:
+        draw_status("x")
 
 
 # run the game
@@ -251,9 +316,12 @@ while(run):
             run = False
             pg.quit()
             sys.exit()
+        elif steps>9:
+            res=send(gates)
+            draw_res(res)
         elif event.type == pg.MOUSEBUTTONDOWN:
             print("drawing")
-            # user_click()
+            user_click()
     pg.display.update()
     running_time.tick(fps)
 
