@@ -47,23 +47,9 @@ Finally, to showcase the full range of the capabilities of quantum computation, 
 
 #### 6) Quantum teleportation
 
-Each player carries an ancillary qubit, which can be used to form an EPR pair with another state on the grid and teleport an existing state to another position. Such a move would not be possible with classical bits.
+Each player carries an ancillary qubit m, which can be used to form an EPR pair with another state on the grid j and teleport an existing state at square i to j. A C-NOT gate is applied to qubit i and m (i is the control qubit and m is the target qubit). After applying Hadamard to qubit i, we measure both quibits i and m. 
 
-## Setup
-
-Our code is dependent on the following packages, which needs to be installed prior to gameplay:
-
-#### Pygame
-`
-python3 -m pip install -U pygame --user
-`
-Reference: https://www.pygame.org/wiki/GettingStarted
-
-#### Qiskit
-`
-pip install qiskit
-`
-Reference: https://qiskit.org/documentation/getting_started.html
+Such a move would not be possible with classical bits.
 
 ## Gameplay
 
