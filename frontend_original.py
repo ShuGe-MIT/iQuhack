@@ -160,25 +160,14 @@ def draw_button(gate, hovered=False):
         btn_bg_color = (150, 150, 0)
     else:
         btn_bg_color = (200, 200, 0)
-    pg.draw.rect(screen, btn_bg_color, pg.Rect(btn_coords[0]+4, btn_coords[1]+4, 115, 90))
+    pg.draw.rect(screen, btn_bg_color, pg.Rect(btn_coords[0]+4, btn_coords[1]+4, 125, 90))
     screen.blit(btn_img, (btn_coords[0], btn_coords[1]))
 
 
 def clear():
-    # if gate == None:
-    #     btn_coords = (0, height)
-    #     pg.draw.rect(screen, (255, 255, 255), pg.Rect(btn_coords[0], btn_coords[1]+3, width, extraheight))
-    # elif gate=="plus2o":
-    #     btn_coords = (0, height)
-    # elif gate=="plus2x":
-    #     btn_coords = (width/4, height)
-    # elif gate=="cnot":
-    #     btn_coords = (width/4*2, height)
-    # elif gate=="teleport":
-    #     btn_coords = (width/4*3, height)
     coords=[(0,height),(width/3, height),(width/3*2,height),(0, height+extraheight/2),(width/3, height+extraheight/2), (width/3*2 , height+extraheight/2)]
     for btn_coords in coords:
-        pg.draw.rect(screen, (255, 255, 255), pg.Rect(btn_coords[0]+4, btn_coords[1]+4, 115, 90))
+        pg.draw.rect(screen, (255, 255, 255), pg.Rect(btn_coords[0]+4, btn_coords[1]+4, 125, 90))
     pg.display.update()
 
 
@@ -212,7 +201,7 @@ def teleport(i,j):
                 board[idx]=["",MEASURE_COLOR]
                 draw_img(idx,board[idx][0], board[idx][1])
         board[j]=board[i][:]
-        board[i]=["ox",(255,255,255)]
+        board[i]=["",MEASURE_COLOR]
         draw_img(i,board[i][0],board[i][1])
         draw_img(j,board[j][0], board[j][1])
         steps+=1
