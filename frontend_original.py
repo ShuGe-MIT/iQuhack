@@ -49,9 +49,11 @@ ox_img = pg.image.load("ox.png")
 xo_img = pg.image.load("xo.png")
 plus_img = pg.image.load("plus.png")
 plus2o_img = pg.image.load("plus2o.png")
-plus2x_img = pg.image.load("minus.png")
-teleport_img = pg.image.load("minus.png")
-cnot_img = pg.image.load("minus.png")
+plus2x_img = pg.image.load("plus2x.png")
+teleport_img = pg.image.load("teleport.png")
+cnot_img = pg.image.load("cnot.png")
+measure_img = pg.image.load("measure.png")
+swap_img = pg.image.load("swap.png")
 
 
 # rescale window
