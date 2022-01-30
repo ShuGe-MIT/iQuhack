@@ -137,7 +137,7 @@ def draw_img(index,img, color):
 
 # TBD: draw_button and clear
 def draw_button(gate, hovered=False):
-    print(draw_button)
+    print("draw_button", gate)
     if gate=="plus2o":
         btn_img = plus2o_img
         btn_coords = (0, height)
@@ -150,27 +150,35 @@ def draw_button(gate, hovered=False):
     elif gate=="teleport":
         btn_img = teleport_img
         btn_coords = (0, height+extraheight/2)
+    elif gate=="measure":
+        btn_img = measure_img
+        btn_coords = (width/3, height+extraheight/2)
+    elif gate=="swap":
+        btn_img = swap_img
+        btn_coords = (width/3*2 , height+extraheight/2)
     if not hovered:
         btn_bg_color = (150, 150, 0)
     else:
         btn_bg_color = (200, 200, 0)
-    pg.draw.rect(screen, btn_bg_color, pg.Rect(btn_coords[0]+5, btn_coords[1]+5, 90, 90))
+    pg.draw.rect(screen, btn_bg_color, pg.Rect(btn_coords[0]+4, btn_coords[1]+4, 115, 90))
     screen.blit(btn_img, (btn_coords[0], btn_coords[1]))
 
 
-def clear(gate=None):
-    if gate == None:
-        btn_coords = (0, height)
-        pg.draw.rect(screen, (255, 255, 255), pg.Rect(btn_coords[0], btn_coords[1]+5, width, extraheight))
-    elif gate=="plus2o":
-        btn_coords = (0, height)
-    elif gate=="plus2x":
-        btn_coords = (width/4, height)
-    elif gate=="cnot":
-        btn_coords = (width/4*2, height)
-    elif gate=="teleport":
-        btn_coords = (width/4*3, height)
-    pg.draw.rect(screen, (255, 255, 255), pg.Rect(btn_coords[0]+5, btn_coords[1]+5, 90, 90))
+def clear():
+    # if gate == None:
+    #     btn_coords = (0, height)
+    #     pg.draw.rect(screen, (255, 255, 255), pg.Rect(btn_coords[0], btn_coords[1]+3, width, extraheight))
+    # elif gate=="plus2o":
+    #     btn_coords = (0, height)
+    # elif gate=="plus2x":
+    #     btn_coords = (width/4, height)
+    # elif gate=="cnot":
+    #     btn_coords = (width/4*2, height)
+    # elif gate=="teleport":
+    #     btn_coords = (width/4*3, height)
+    coords=[(0,height),(width/3, height),(width/3*2,height),(0, height+extraheight/2),(width/3, height+extraheight/2), (width/3*2 , height+extraheight/2)]
+    for btn_coords in coords:
+        pg.draw.rect(screen, (255, 255, 255), pg.Rect(btn_coords[0]+4, btn_coords[1]+4, 115, 90))
     pg.display.update()
 
 
@@ -199,7 +207,10 @@ def plus2x(i):
 def teleport(i,j):
     global gates, steps
     if board[i][0]!="" and board[j][0]!="":
-        print("teleport", board[i], "to", board[j])
+        for idx,b in enumerate(board):
+            if idx!=i and idx!=j and b[1]==board[j][1]:
+                board[idx]=["",MEASURE_COLOR]
+                draw_img(idx,board[idx][0], board[idx][1])
         board[j]=board[i][:]
         board[i]=["ox",(255,255,255)]
         draw_img(i,board[i][0],board[i][1])
@@ -217,7 +228,7 @@ def measure(i):
 def swap(i,j):
     global gates
     if board[i][0]!="" and board[j][0]!="":
-        board[i],board[j]=board[j][:], board[j][:]
+        board[i],board[j]=board[j][:], board[i][:]
         gates+=[("swap",i,j)]
         draw_img(i,board[i][0], board[i][1])
         draw_img(j,board[j][0], board[j][1])
@@ -291,11 +302,10 @@ def user_click():
             print(i)
             if not twoq_gate:
                 choice_1=i
-                if board[i][0]==["ox",(255,255,255)]:
+                if board[i]==["ox",(255,255,255)]:
                     # draw_img(i,board[i][0], board[i][1])
                     draw_button("plus2o")
                     draw_button("plus2x")
-                    draw_button("cnot")
                     draw_button("teleport")
                     draw_button("measure")
                     draw_button("swap")
@@ -400,7 +410,7 @@ def check_winner(res):
                 cnts[1]+=1
     for i in range(3):
         check(i,i+3,i+3)
-        check(i*3,i*3+1,i*3+2)
+        check(i*3,i*3+3,i*3+2)
     check(0,4,8)
     check(2,4,6)
 
