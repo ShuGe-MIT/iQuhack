@@ -8,6 +8,7 @@
 # I would work on hover afterwards, once the game is working
 
 
+from matplotlib.pyplot import draw
 import pygame as pg
 import sys
 import time
@@ -357,29 +358,14 @@ def update_message(message):
     pg.display.update()
 
 def draw_status(winner):
-	
-	# getting the global variable draw
-	# into action
-	global draw
-	
-	if winner!="draw":
-		message = winner + " won !"
-	else:
-		message = "Game Draw !"
+    global draw
 
-	# setting a font object
-	font = pg.font.Font(None, 30)
-	
-	# setting the font properties like
-	# color and width of the text
-	text = font.render(message, 1, (255, 255, 255))
+    if winner!="draw":
+        mes = winner + " wins!"
+    else:
+        mes = "Game Draw!"
+    update_message(mes)
 
-	# copy the rendered message onto the board
-	# creating a small block at the bottom of the main display
-	screen.fill ((0, 0, 0), (0, 400, 500, 100))
-	text_rect = text.get_rect(center =(width / 2, 500-50))
-	screen.blit(text, text_rect)
-	pg.display.update()
 
 def check_winner(res):
     cnts=[0,0]
