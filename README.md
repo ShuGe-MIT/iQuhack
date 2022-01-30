@@ -1,4 +1,6 @@
-# Qic Qac Qoe
+# Qic Qac Qoe - iQuHack 2022
+
+Team members: Chirag Falor, Hieu Dinh, Lauren Li, Linh Nguyen, Shu Ge
 
 
 ## Overview
