@@ -181,7 +181,7 @@ def plus2x(i):
 
 def teleport(i,j):
     global gates, steps
-    board[i]=["ox",0]
+    board[i]=["ox",(255,255,255)]
     board[j]=board[i][:]
     draw_img(i,board[i][0],board[i][1])
     draw_img(j,board[j][0], board[j][1])
@@ -196,7 +196,7 @@ def flip_(state):
 
 def cnot(i,j):
     global color, gates, steps
-    
+    print("cnot", i, j)
     if (len(board[j][0])==1):
         if board[i][0]=="x":
             board[j][0]=flip_(board[j][0])
@@ -225,7 +225,9 @@ def user_click():
     global choice_1, twoq_gate, choice_2
     # get coordinates of mouse click
     x, y = pg.mouse.get_pos()
-    print(x,y)
+    print("position",x,y)
+    print("choice_1", choice_1, "choice_2", choice_2)
+    print("twoq_gate", twoq_gate)
     # get column of mouse click (1-3)
     if y<height:
         if(x<width / 3):
@@ -262,12 +264,14 @@ def user_click():
                     draw_button("plus2x")
                     draw_button("teleport")
             elif choice_1>=0:
+                print("twoq",twoq_gate)
                 if twoq_gate=="teleport":
                     teleport(choice_1,choice_2)
                     clear()
                     choice_1=-1
                     choice_2=-1
                 elif twoq_gate=="cnot":
+                    print("entered cnot", choice_1, choice_2)
                     cnot(choice_1,choice_2)
                     clear()
                     choice_1=-1
@@ -277,7 +281,6 @@ def user_click():
     else:
         if y<height+extraheight/2:
             if(x<width / 3) and choice_1>=0:
-                print("plus2o")
                 plus2o(choice_1)
                 clear()
                 choice_1=-1
@@ -287,6 +290,7 @@ def user_click():
                 choice_1=-1
             elif(x<width / 4 * 3):
                 twoq_gate="cnot"
+                print("pressed cnot")
             else:
                 twoq_gate="teleport"
 
