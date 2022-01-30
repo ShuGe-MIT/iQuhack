@@ -1,3 +1,12 @@
+# READ THIS
+
+# the game sort of works, you have to add in the images for the gates
+# Also, Hieu (and Linh) still wants to measure state and we can add in swap as well to make 6 gates
+# The measured state is measured once and cannot be used after that, not even for applying gates (which makes it doable)
+# Also, board[i][1] is the color, and I am planning to represent it as a tuple rather than index of color
+# plus2o and plus2x work well, the logic of others have to improved
+# I would work on hover afterwards, once the game is working
+
 
 import pygame as pg
 import sys
@@ -7,7 +16,7 @@ from pygame.locals import *
 
 width = 400
 height = 400
-extraheight = 100
+extraheight = 200
 fps = 15
 running_time = pg.time.Clock()
 
@@ -35,6 +44,11 @@ o_img = pg.image.load("o.png")
 ox_img = pg.image.load("ox.png")
 xo_img = pg.image.load("xo.png")
 plus_img = pg.image.load("plus.png")
+plus2o_img = pg.image.load("plus2o.png")
+plus2x_img = pg.image.load("minus.png")
+teleport_img = pg.image.load("minus.png")
+cnot_img = pg.image.load("minus.png")
+
 
 # rescale window
 initiating_window = pg.transform.scale(initiating_window, (width, height + extraheight))
@@ -56,10 +70,10 @@ def game_initiating_window():
     pg.draw.line(screen, (0, 0, 0), (width / 3 * 2, 0), (width / 3 * 2, height), 7)
     pg.draw.line(screen, (0, 0, 0), (0, height / 3), (width, height / 3), 7)
     pg.draw.line(screen, (0, 0, 0), (0, height / 3 * 2), (width, height / 3 * 2), 7)
-
-    pg.draw.line(screen, (0,0,0), (width/4 , height), (width/4 , height+extraheight), 7)
-    pg.draw.line(screen, (0,0,0), (width/4*2 , height), (width/4*2 , height+extraheight), 7)
-    pg.draw.line(screen, (0,0,0), (width/4*3 , height), (width/4*3 , height+extraheight), 7)
+    pg.draw.line(screen, (0, 0, 0), (0, height), (width, height), 9)
+    pg.draw.line(screen, (0,0,0), (width/3 , height), (width/3 , height+extraheight), 7)
+    pg.draw.line(screen, (0,0,0), (width/3*2 , height), (width/3*2 , height+extraheight), 7)
+    pg.draw.line(screen, (0,0,0), (0 , height+extraheight/2), (width , height+extraheight/2), 7)
 
     pg.display.update()
 
@@ -68,7 +82,12 @@ def game_initiating_window():
 
     # add in the initial board
     for i in range(9):
-        draw_img(i, "ox", (255, 255, 0))
+        draw_img(i, "ox", (255, 255, 255))
+        for t in board:
+            t[0]="ox"
+            t[1]= (255, 255, 255)
+
+
     # draw_status()
 
 
@@ -82,7 +101,6 @@ def draw_img(index,img, color):
     y_coord = index // 3
     posx = x_coord * width/3 + 20
     posy = y_coord * height/3 + 20
-    print(posx, posy)
     if img == "x":
         commit_img = x_img
     elif img == "o":
@@ -103,33 +121,51 @@ def draw_img(index,img, color):
     pg.display.update()
 
 # TBD: draw_button and clear
-def draw_button(gate):
+def draw_button(gate, hovered=False):
+    print(draw_button)
     if gate=="plus2o":
-        pass
+        btn_img = plus2o_img
+        btn_coords = (0, height)
     elif gate=="plus2x":
-        pass
+        btn_img = plus2x_img
+        btn_coords = (width/3, height)
     elif gate=="cnot":
-        pass
+        btn_img = cnot_img
+        btn_coords = (width/3*2, height)
     elif gate=="teleport":
-        pass
+        btn_img = teleport_img
+        btn_coords = (0, height+extraheight/2)
+    if not hovered:
+        btn_bg_color = (150, 150, 0)
+    else:
+        btn_bg_color = (200, 200, 0)
+    pg.draw.rect(screen, btn_bg_color, pg.Rect(btn_coords[0]+5, btn_coords[1]+5, 90, 90))
+    screen.blit(btn_img, (btn_coords[0], btn_coords[1]))
 
-def clear(gate):
-    if gate=="plus2o":
-        pass
+
+def clear(gate=None):
+    if gate == None:
+        btn_coords = (0, height)
+        pg.draw.rect(screen, (255, 255, 255), pg.Rect(btn_coords[0], btn_coords[1]+5, width, extraheight))
+    elif gate=="plus2o":
+        btn_coords = (0, height)
     elif gate=="plus2x":
-        pass
+        btn_coords = (width/4, height)
     elif gate=="cnot":
-        pass
+        btn_coords = (width/4*2, height)
     elif gate=="teleport":
-        pass
+        btn_coords = (width/4*3, height)
+    pg.draw.rect(screen, (255, 255, 255), pg.Rect(btn_coords[0]+5, btn_coords[1]+5, 90, 90))
+
+    pg.display.update()
 
 
 ## moves
 def plus2o(i):
     global gates, steps
-    if board[i][0]=="ox" and board[i][1]==0:
+    if board[i][0]=="ox" and board[i][1]==(255, 255, 255):
         board[i][0]="o"
-        draw_img(i,"o", 0)
+        draw_img(i,"o", (255, 255, 255))
         steps+=1
         gates+=[("hadamard", i)]
     else:
@@ -137,9 +173,9 @@ def plus2o(i):
 
 def plus2x(i):
     global gates, steps
-    if board[i][0]=="ox" and board[i][1]==0:
+    if board[i][0]=="ox" and board[i][1]==(255, 255, 255):
         board[i][0]="x"
-        draw_img(i,"x", 0)
+        draw_img(i,"x", (255, 255, 255))
         steps+=1
         gates+= [("sigmaz", i),("hadamard", i)]
 
@@ -189,6 +225,7 @@ def user_click():
     global choice_1, twoq_gate, choice_2
     # get coordinates of mouse click
     x, y = pg.mouse.get_pos()
+    print(x,y)
     # get column of mouse click (1-3)
     if y<height:
         if(x<width / 3):
@@ -209,15 +246,20 @@ def user_click():
         else:
             row = None
         if col!=None and row!=None:
-            i=(col-1)*3+(row-1)
+            i=(col-1)+(row-1)*3
+            print(i)
             if not twoq_gate:
                 choice_1=i
                 if len(board[i][0])==1:
+                    draw_img(i,board[i][0], board[i][1])
+                    twoq_gate=True
                     draw_button("plus2o")
                     draw_button("plus2x")
                     draw_button("cnot")
                     draw_button("teleport")
                 else:
+                    draw_button("plus2o")
+                    draw_button("plus2x")
                     draw_button("teleport")
             elif choice_1>=0:
                 if twoq_gate=="teleport":
@@ -233,18 +275,20 @@ def user_click():
 
 
     else:
-        if(x<width / 4) and choice_1>=0:
-            plus2o(choice_1)
-            clear()
-            choice_1=-1
-        elif (x<width / 4 * 2):
-            plus2x(choice_1)
-            clear()
-            choice_1=-1
-        elif(x<width / 4 * 3):
-            twoq_gate="cnot"
-        else:
-            twoq_gate="teleport"
+        if y<height+extraheight/2:
+            if(x<width / 3) and choice_1>=0:
+                print("plus2o")
+                plus2o(choice_1)
+                clear()
+                choice_1=-1
+            elif (x<width / 3 * 2):
+                plus2x(choice_1)
+                clear()
+                choice_1=-1
+            elif(x<width / 4 * 3):
+                twoq_gate="cnot"
+            else:
+                twoq_gate="teleport"
 
 
 # TODO: send sequence of moves to backend
@@ -256,7 +300,7 @@ def draw_res(res):
             draw_img(i,"o",0)
         else:
             draw_img(i,"x",0)
-
+# TBD improve draw status to give message at each point of the game
 def draw_status(winner):
 	
 	# getting the global variable draw
@@ -323,6 +367,7 @@ while(run):
         elif event.type == pg.MOUSEBUTTONDOWN:
             print("drawing")
             user_click()
+    
     pg.display.update()
     running_time.tick(fps)
 
