@@ -17,6 +17,7 @@ from pygame.locals import *
 width = 400
 height = 400
 extraheight = 200
+textboxheight = 100
 fps = 15
 running_time = pg.time.Clock()
 
@@ -37,7 +38,7 @@ gates=[]
 
 pg.init()
 
-screen = pg.display.set_mode((width, height + extraheight), 0, 32)
+screen = pg.display.set_mode((width, height + extraheight + textboxheight), 0, 32)
 pg.display.set_caption("Quantum Tic Tac Toe")
 
 # loading the images as python object
@@ -54,7 +55,7 @@ cnot_img = pg.image.load("minus.png")
 
 
 # rescale window
-initiating_window = pg.transform.scale(initiating_window, (width, height + extraheight))
+initiating_window = pg.transform.scale(initiating_window, (width, height + extraheight + textboxheight))
 x_img = pg.transform.scale(x_img, (90, 90))
 o_img = pg.transform.scale(o_img, (90, 90))
 ox_img = pg.transform.scale(ox_img, (90, 90))
@@ -341,6 +342,12 @@ def draw_res(res):
         else:
             draw_img(i,"x",0)
 # TBD improve draw status to give message at each point of the game
+
+def update_message(message):
+    global message_text
+    message_text=message
+    print("message_text", message_text)
+
 def draw_status(winner):
 	
 	# getting the global variable draw
