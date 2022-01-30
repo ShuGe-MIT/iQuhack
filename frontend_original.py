@@ -20,6 +20,9 @@ extraheight = 200
 fps = 15
 running_time = pg.time.Clock()
 
+MEASURE_COLOR=(43,43,43)
+colors=[(255,255,255),(236,224,209),(145,116,103),(166,197,224),(170,195,147)]
+
 board = [[None, None], [None, None], [None, None], [None, None], [None, None], [None, None], [None, None], [None, None], [None, None]]
 
 color=1
@@ -113,6 +116,7 @@ def draw_img(index,img, color):
     elif img == "xo":
         commit_img = xo_img
 
+
     pg.draw.rect(screen, color, pg.Rect(posx-15, posy-15, 125, 125))
     screen.blit(commit_img, (posx, posy))
 
@@ -188,15 +192,26 @@ def teleport(i,j):
     steps+=1
     gates+= [("teleport",i,j)]
 
+def measure(i):
+    global gates
+    board[i]=["",MEASURE_COLOR]
+    gates+=[("measure",i)]
+
+def swap(i,j):
+    global gates
+    board[i],board[j]=board[j][:], board[j][:]
+    gates+=[("swap",i,j)]
+
 def flip_(state):
     if state=="o": return "x"
     elif state=="x": return "o"
     elif state=="ox": return "xo"
     elif state=="xo": return "ox"
 
-def cnot(i,j):
+def cnot(j,i):
     global color, gates, steps
     print("cnot", i, j)
+    print(board[j])
     if (len(board[j][0])==1):
         if board[i][0]=="x":
             board[j][0]=flip_(board[j][0])
@@ -208,17 +223,20 @@ def cnot(i,j):
                 board[j][0]=board[i][0]
 
             # update color
-            if board[i][1]==0:
-                board[i][1]=color
-                board[j][1]=color
+            if board[i][1]==(255,255,255):
+                board[i][1]=colors[color]
+                board[j][1]=colors[color]
                 color+=1
                 draw_img(i,board[i][0], board[i][1])
             else:
-                board[j][1]=board[i][1]
+                board[j][1]=board[i][1][:]
+        print("draw_img", board[j])
         draw_img(j,board[j][0], board[j][1])
         steps+=1
         gates+= [("cnot",i,j)]
     return False
+
+
 
 ## handle user click
 def user_click():
@@ -264,23 +282,32 @@ def user_click():
                     draw_button("plus2x")
                     draw_button("teleport")
             elif choice_1>=0:
+                choice_2=i
                 print("twoq",twoq_gate)
                 if twoq_gate=="teleport":
                     teleport(choice_1,choice_2)
                     clear()
                     choice_1=-1
                     choice_2=-1
+                    twoq_gate=""
                 elif twoq_gate=="cnot":
                     print("entered cnot", choice_1, choice_2)
                     cnot(choice_1,choice_2)
                     clear()
                     choice_1=-1
                     choice_2=-1
+                    twoq_gate=""
+                elif twoq_gate=="swap":
+                    swap(choice_1,choice_2)
+                    clear()
+                    choice_1=-1
+                    choice_2=-1
+                    twoq_gate=""
 
 
-    else:
+    elif choice_1>=0:
         if y<height+extraheight/2:
-            if(x<width / 3) and choice_1>=0:
+            if(x<width / 3):
                 plus2o(choice_1)
                 clear()
                 choice_1=-1
@@ -288,11 +315,20 @@ def user_click():
                 plus2x(choice_1)
                 clear()
                 choice_1=-1
-            elif(x<width / 4 * 3):
+            else:
                 twoq_gate="cnot"
                 print("pressed cnot")
-            else:
+        else:
+            if(x<width / 3):
                 twoq_gate="teleport"
+                print("click teleport")
+            elif (x<width /3*2):
+                measure(choice_1)
+                clear()
+                choice_1=-1
+            else:
+                twoq_gate="swap"
+                print("click swap")
 
 
 # TODO: send sequence of moves to backend
@@ -372,5 +408,3 @@ while(run):
     
     pg.display.update()
     running_time.tick(fps)
-
-
