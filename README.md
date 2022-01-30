@@ -25,7 +25,7 @@ The player selects one qubit and applies
 
 It is represented by "plus -> O" gate in the game.
 
-#### 3) Z gate followed by Hadammard gate
+#### 3) Z gate followed by Hadamard gate
 
 The player selects one qubit and applies 
 
