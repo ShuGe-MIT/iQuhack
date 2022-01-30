@@ -8,6 +8,7 @@
 # I would work on hover afterwards, once the game is working
 
 
+from matplotlib.pyplot import draw
 import pygame as pg
 import sys
 import time
@@ -17,8 +18,12 @@ from pygame.locals import *
 width = 400
 height = 400
 extraheight = 200
+textboxheight = 80
 fps = 15
 running_time = pg.time.Clock()
+
+MEASURE_COLOR=(43,43,43)
+colors=[(255,255,255),(236,224,209),(145,116,103),(166,197,224),(170,195,147)]
 
 board = [[None, None], [None, None], [None, None], [None, None], [None, None], [None, None], [None, None], [None, None], [None, None]]
 
@@ -34,7 +39,7 @@ gates=[]
 
 pg.init()
 
-screen = pg.display.set_mode((width, height + extraheight), 0, 32)
+screen = pg.display.set_mode((width, height + extraheight + textboxheight), 0, 32)
 pg.display.set_caption("Quantum Tic Tac Toe")
 
 # loading the images as python object
@@ -45,18 +50,22 @@ ox_img = pg.image.load("ox.png")
 xo_img = pg.image.load("xo.png")
 plus_img = pg.image.load("plus.png")
 plus2o_img = pg.image.load("plus2o.png")
-plus2x_img = pg.image.load("minus.png")
-teleport_img = pg.image.load("minus.png")
-cnot_img = pg.image.load("minus.png")
+empty_img=pg.image.load("empty.png")
+plus2x_img = pg.image.load("plus2x.png")
+teleport_img = pg.image.load("teleport.png")
+cnot_img = pg.image.load("cnot.png")
+measure_img = pg.image.load("measure.png")
+swap_img = pg.image.load("swap.png")
 
 
 # rescale window
-initiating_window = pg.transform.scale(initiating_window, (width, height + extraheight))
+initiating_window = pg.transform.scale(initiating_window, (width, height + extraheight + textboxheight))
 x_img = pg.transform.scale(x_img, (90, 90))
 o_img = pg.transform.scale(o_img, (90, 90))
 ox_img = pg.transform.scale(ox_img, (90, 90))
 xo_img = pg.transform.scale(xo_img, (90, 90))
 plus_img = pg.transform.scale(plus_img, (90, 90))
+empty_img =  pg.transform.scale(empty_img,(90,90))
 
 def game_initiating_window():
     screen.blit(initiating_window, (0, 0))
@@ -74,6 +83,7 @@ def game_initiating_window():
     pg.draw.line(screen, (0,0,0), (width/3 , height), (width/3 , height+extraheight), 7)
     pg.draw.line(screen, (0,0,0), (width/3*2 , height), (width/3*2 , height+extraheight), 7)
     pg.draw.line(screen, (0,0,0), (0 , height+extraheight/2), (width , height+extraheight/2), 7)
+    pg.draw.line(screen, (0, 0, 0), (0, height+extraheight), (width, height+extraheight), 9)
 
     pg.display.update()
 
@@ -86,6 +96,8 @@ def game_initiating_window():
         for t in board:
             t[0]="ox"
             t[1]= (255, 255, 255)
+    
+    update_message("Welcome to Quantum Tic Tac Toe")
 
 
     # draw_status()
@@ -112,6 +124,9 @@ def draw_img(index,img, color):
             commit_img = ox_img
     elif img == "xo":
         commit_img = xo_img
+    elif img=="":
+        commit_img=empty_img
+
 
     pg.draw.rect(screen, color, pg.Rect(posx-15, posy-15, 125, 125))
     screen.blit(commit_img, (posx, posy))
@@ -156,7 +171,6 @@ def clear(gate=None):
     elif gate=="teleport":
         btn_coords = (width/4*3, height)
     pg.draw.rect(screen, (255, 255, 255), pg.Rect(btn_coords[0]+5, btn_coords[1]+5, 90, 90))
-
     pg.display.update()
 
 
@@ -165,7 +179,8 @@ def plus2o(i):
     global gates, steps
     if board[i][0]=="ox" and board[i][1]==(255, 255, 255):
         board[i][0]="o"
-        draw_img(i,"o", (255, 255, 255))
+        print("set i to 0", board[i][0])
+        draw_img(i,board[i][0], board[i][1])
         steps+=1
         gates+=[("hadamard", i)]
     else:
@@ -175,18 +190,37 @@ def plus2x(i):
     global gates, steps
     if board[i][0]=="ox" and board[i][1]==(255, 255, 255):
         board[i][0]="x"
-        draw_img(i,"x", (255, 255, 255))
+        draw_img(i,board[i][0], board[i][1])
         steps+=1
         gates+= [("sigmaz", i),("hadamard", i)]
+    else:
+        return False
 
 def teleport(i,j):
     global gates, steps
-    board[i]=["ox",(255,255,255)]
-    board[j]=board[i][:]
-    draw_img(i,board[i][0],board[i][1])
-    draw_img(j,board[j][0], board[j][1])
-    steps+=1
-    gates+= [("teleport",i,j)]
+    if board[i][0]!="" and board[j][0]!="":
+        print("teleport", board[i], "to", board[j])
+        board[j]=board[i][:]
+        board[i]=["ox",(255,255,255)]
+        draw_img(i,board[i][0],board[i][1])
+        draw_img(j,board[j][0], board[j][1])
+        steps+=1
+        gates+= [("teleport",i,j)]
+
+def measure(i):
+    global gates
+    if board[i][0]!="":
+        board[i]=["",MEASURE_COLOR]
+        draw_img(i, board[i][0], board[i][1])
+        gates+=[("measure",i)]
+
+def swap(i,j):
+    global gates
+    if board[i][0]!="" and board[j][0]!="":
+        board[i],board[j]=board[j][:], board[j][:]
+        gates+=[("swap",i,j)]
+        draw_img(i,board[i][0], board[i][1])
+        draw_img(j,board[j][0], board[j][1])
 
 def flip_(state):
     if state=="o": return "x"
@@ -194,31 +228,36 @@ def flip_(state):
     elif state=="ox": return "xo"
     elif state=="xo": return "ox"
 
-def cnot(i,j):
+def cnot(j,i):
     global color, gates, steps
-    print("cnot", i, j)
-    if (len(board[j][0])==1):
-        if board[i][0]=="x":
-            board[j][0]=flip_(board[j][0])
-        else:
-            # udpate state
-            if board[j][0]=="x":
-                board[j][0]=flip_(board[i][0])
+    if board[i][0]!="" and board[j][0]!="":
+        print("cnot", i, j)
+        print(board[j])
+        if (len(board[j][0])==1):
+            if board[i][0]=="x":
+                board[j][0]=flip_(board[j][0])
             else:
-                board[j][0]=board[i][0]
+                # udpate state
+                if board[j][0]=="x":
+                    board[j][0]=flip_(board[i][0])
+                else:
+                    board[j][0]=board[i][0]
 
-            # update color
-            if board[i][1]==0:
-                board[i][1]=color
-                board[j][1]=color
-                color+=1
-                draw_img(i,board[i][0], board[i][1])
-            else:
-                board[j][1]=board[i][1]
-        draw_img(j,board[j][0], board[j][1])
-        steps+=1
-        gates+= [("cnot",i,j)]
-    return False
+                # update color
+                if board[i][1]==(255,255,255):
+                    board[i][1]=colors[color]
+                    board[j][1]=colors[color]
+                    color+=1
+                    draw_img(i,board[i][0], board[i][1])
+                else:
+                    board[j][1]=board[i][1][:]
+            print("draw_img", board[j])
+            draw_img(j,board[j][0], board[j][1])
+            steps+=1
+            gates+= [("cnot",i,j)]
+    
+
+
 
 ## handle user click
 def user_click():
@@ -252,35 +291,50 @@ def user_click():
             print(i)
             if not twoq_gate:
                 choice_1=i
-                if len(board[i][0])==1:
-                    draw_img(i,board[i][0], board[i][1])
-                    twoq_gate=True
+                if board[i][0]==["ox",(255,255,255)]:
+                    # draw_img(i,board[i][0], board[i][1])
                     draw_button("plus2o")
                     draw_button("plus2x")
                     draw_button("cnot")
                     draw_button("teleport")
-                else:
-                    draw_button("plus2o")
-                    draw_button("plus2x")
+                    draw_button("measure")
+                    draw_button("swap")
+                elif board[i][0]=="o" or board[i][0]=="x":
+                    draw_button("cnot")
                     draw_button("teleport")
+                    draw_button("measure")
+                    draw_button("swap")
+                elif board[i][0]!="":
+                    draw_button("teleport")
+                    draw_button("measure")
+                    draw_button("swap")
+                    
             elif choice_1>=0:
+                choice_2=i
                 print("twoq",twoq_gate)
                 if twoq_gate=="teleport":
                     teleport(choice_1,choice_2)
                     clear()
                     choice_1=-1
                     choice_2=-1
+                    twoq_gate=""
                 elif twoq_gate=="cnot":
-                    print("entered cnot", choice_1, choice_2)
                     cnot(choice_1,choice_2)
                     clear()
                     choice_1=-1
                     choice_2=-1
+                    twoq_gate=""
+                elif twoq_gate=="swap":
+                    swap(choice_1,choice_2)
+                    clear()
+                    choice_1=-1
+                    choice_2=-1
+                    twoq_gate=""
 
 
-    else:
+    elif choice_1>=0:
         if y<height+extraheight/2:
-            if(x<width / 3) and choice_1>=0:
+            if(x<width / 3):
                 plus2o(choice_1)
                 clear()
                 choice_1=-1
@@ -288,15 +342,26 @@ def user_click():
                 plus2x(choice_1)
                 clear()
                 choice_1=-1
-            elif(x<width / 4 * 3):
+            else:
                 twoq_gate="cnot"
                 print("pressed cnot")
-            else:
+        else:
+            if(x<width / 3):
                 twoq_gate="teleport"
+                print("click teleport")
+            elif (x<width /3*2):
+                measure(choice_1)
+                clear()
+                choice_1=-1
+            else:
+                twoq_gate="swap"
+                print("click swap")
 
 
 # TODO: send sequence of moves to backend
-def send(): pass
+def send(gates): 
+    print("send gates")
+    pass
 
 def draw_res(res): 
     for i,r in enumerate(res):
@@ -305,30 +370,25 @@ def draw_res(res):
         else:
             draw_img(i,"x",0)
 # TBD improve draw status to give message at each point of the game
+
+def update_message(message):
+    global message_text
+    message_text=message
+    font = pg.font.SysFont('Arial', 20)
+    text = font.render(message_text, True, (255, 105, 205))
+    text_rect = text.get_rect(center = (width/2, height+extraheight+textboxheight/2))
+    screen.blit(text, text_rect)
+    pg.display.update()
+
 def draw_status(winner):
-	
-	# getting the global variable draw
-	# into action
-	global draw
-	
-	if winner!="draw":
-		message = winner + " won !"
-	else:
-		message = "Game Draw !"
+    global draw
 
-	# setting a font object
-	font = pg.font.Font(None, 30)
-	
-	# setting the font properties like
-	# color and width of the text
-	text = font.render(message, 1, (255, 255, 255))
+    if winner!="draw":
+        mes = winner + " wins!"
+    else:
+        mes = "Game Draw!"
+    update_message(mes)
 
-	# copy the rendered message onto the board
-	# creating a small block at the bottom of the main display
-	screen.fill ((0, 0, 0), (0, 400, 500, 100))
-	text_rect = text.get_rect(center =(width / 2, 500-50))
-	screen.blit(text, text_rect)
-	pg.display.update()
 
 def check_winner(res):
     cnts=[0,0]
@@ -356,6 +416,13 @@ def check_winner(res):
 # initiate the game
 game_initiating_window()
 
+def check_done():
+    cnt=0
+    for b in board:
+        if b[0]=="":
+            cnt+=1
+    return cnt==9
+
 run = True
 while(run):
     for event in pg.event.get():
@@ -363,7 +430,7 @@ while(run):
             run = False
             pg.quit()
             sys.exit()
-        elif steps>9:
+        elif check_done():
             res=send(gates)
             draw_res(res)
         elif event.type == pg.MOUSEBUTTONDOWN:
@@ -372,5 +439,3 @@ while(run):
     
     pg.display.update()
     running_time.tick(fps)
-
-
