@@ -450,16 +450,19 @@ def check_done():
     return cnt==9
 
 run = True
+
+checked = False
 while(run):
     for event in pg.event.get():
         if event.type == pg.QUIT:
             run = False
             pg.quit()
             sys.exit()
-        elif check_done():
+        elif check_done() and not checked:
             res=send(gates)
             print("this is res", res)
             draw_res(res)
+            checked = True
         elif event.type == pg.MOUSEBUTTONDOWN:
             print("drawing")
             user_click()
