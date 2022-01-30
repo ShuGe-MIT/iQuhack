@@ -198,7 +198,7 @@ def teleport(i,j):
     global gates, steps
     if board[i][0]!="" and board[j][0]!="":
         for idx,b in enumerate(board):
-            if idx!=i and idx!=j and b[1]==board[j][1]:
+            if idx!=i and idx!=j and b[1]==board[j][1] and board[j][1]!=(255, 255, 255):
                 board[idx]=["",MEASURE_COLOR]
                 draw_img(idx,board[idx][0], board[idx][1])
         board[j]=board[i][:]
@@ -211,6 +211,11 @@ def teleport(i,j):
 def measure(i):
     global gates
     if board[i][0]!="":
+        if board[i][1]!=(255,255,255):
+            for idx,b in enumerate(board):
+                if idx!=i and b[1]==board[i][1]:
+                    board[idx]=["",MEASURE_COLOR]
+                    draw_img(idx,board[idx][0], board[idx][1])
         board[i]=["",MEASURE_COLOR]
         draw_img(i, board[i][0], board[i][1])
         gates+=[("measure",i)]
@@ -368,7 +373,7 @@ def send(gates):
     print('------------------------------')
     print('This is mes_qb: ', mes_qb)
     print('------------------------------')
-    result = qc.simulate(4000)
+    result = qc.simulate(1)
     print('------------------------------')
     print('This is result: ', result)
     record = get_the_final_state(result)
@@ -381,9 +386,10 @@ def send(gates):
 def draw_res(res): 
     for i,r in enumerate(res):
         if r==0:
-            draw_img(i,"o",0)
+            draw_img(i,"o",(255,255,255))
         else:
-            draw_img(i,"x",0)
+            draw_img(i,"x",(255,255,255))
+    check_winner(res)
 # TBD improve draw status to give message at each point of the game
 
 def update_message(message):
@@ -391,6 +397,7 @@ def update_message(message):
     message_text=message
     font = pg.font.SysFont('Arial', 20)
     text = font.render(message_text, True, (255, 105, 205))
+    pg.draw.rect(screen, (255, 255, 255), pg.Rect(0, height+extraheight,width, textboxheight))
     text_rect = text.get_rect(center = (width/2, height+extraheight+textboxheight/2))
     screen.blit(text, text_rect)
     pg.display.update()
@@ -407,6 +414,7 @@ def draw_status(winner):
 
 def check_winner(res):
     cnts=[0,0]
+    print("this is res", res)
     def check(i,j,k):
         if res[i]==res[j]==res[k]:
             if res[0]=="o":
@@ -415,15 +423,18 @@ def check_winner(res):
                 cnts[1]+=1
     for i in range(3):
         check(i,i+3,i+3)
-        check(i*3,i*3+3,i*3+2)
+        check(i*3,i*3+1,i*3+2)
     check(0,4,8)
     check(2,4,6)
 
     if cnts[0]==cnts[1]:
+        print("draw")
         draw_status("draw")
     elif cnts[0]>cnts[1]:
+        print("o wins")
         draw_status("o")
     else:
+        print("x wins")
         draw_status("x")
 
 
@@ -447,6 +458,7 @@ while(run):
             sys.exit()
         elif check_done():
             res=send(gates)
+            print("this is res", res)
             draw_res(res)
         elif event.type == pg.MOUSEBUTTONDOWN:
             print("drawing")

@@ -119,7 +119,7 @@ class Qtic:
         """
         #measure all qubits before running job
         self.measure([i for i in range(9)])
-        job = execute(self.circuit, backend=self.backend, shots=shot)
+        job = execute(self.circuit, backend=self.backend, shots=1)
         #job = execute(self.circuit,backend = QuantumInstance(self.backend, shots = shot))
         print("Successfully execute the job")
         result = job.result()
@@ -204,89 +204,74 @@ backend = Aer.get_backend('qasm_simulator')
 info_for_classic_board = []
 # Sample input
 #while super_board.update(info_for_classic_board) == "Continue":
-while not super_board.end_game():    
-    def instruction(input_seq):
-        """
-        Given an input_seq (a list of tuple),
-        Return a Quantum Circuit that will be submitted to the Azure Quantum
-        """
-        #intitilaize the board
-        qc = Qtic(backend)
-        for item in input_seq:
-            if item[0] == "cnot":
-                i,j = item[1], item[2]
-                qc.cnot(i,j)
-            elif item[0] == "hadamard":
-                qc.hadamard(item[1])
-            elif item[0] == "sigmaz":
-                qc.pauliz(item[1])
-            elif item[0] == "swap":
-                i,j = item[1], item[2]
-                qc.swap(i,j)
-            elif item[0] == "teleport":  # Remember to fix this code
-                qc.teleportation(item[1],item[2], 10)
-            elif item[0] == "measure":  # Remember to fix this code
-                qc.measure([item[1]])
-        return qc
+   
+def instruction(input_seq):
+    """
+    Given an input_seq (a list of tuple),
+    Return a Quantum Circuit that will be submitted to the Azure Quantum
+    """
+    #intitilaize the board
+    qc = Qtic(backend)
+    for item in input_seq:
+        if item[0] == "cnot":
+            i,j = item[1], item[2]
+            qc.cnot(i,j)
+        elif item[0] == "hadamard":
+            qc.hadamard(item[1])
+        elif item[0] == "sigmaz":
+            qc.pauliz(item[1])
+        elif item[0] == "swap":
+            i,j = item[1], item[2]
+            qc.swap(i,j)
+        elif item[0] == "teleport":  # Remember to fix this code
+            qc.teleportation(item[1],item[2], 10)
+        elif item[0] == "measure":  # Remember to fix this code
+            qc.measure([item[1]])
+    return qc
 
 
-    def get_the_final_state(input_1):
-        """
-        Input_1: a list of dictionaries of marginal counts e.g: [{'1': 1046, '0': 1002}, {'1': 1001, '0': 1047}] (e.g: output of Qtic.simulate)
-        Return the state that corresponds to higher frequency for each qubit
-        """
-        record = []
-        for item in input_1:
-            if len(item) == 1:
-                record.append(int(list(item.keys())[0]))
-            elif item['1'] > item['0']:
-                record.append(1)
-            else:
-                record.append(0)
-        return record
+def get_the_final_state(input_1):
+    """
+    Input_1: a list of dictionaries of marginal counts e.g: [{'1': 1046, '0': 1002}, {'1': 1001, '0': 1047}] (e.g: output of Qtic.simulate)
+    Return the state that corresponds to higher frequency for each qubit
+    """
+    record = []
+    for item in input_1:
+        if len(item) == 1:
+            record.append(int(list(item.keys())[0]))
+        elif item['1'] > item['0']:
+            record.append(1)
+        else:
+            record.append(0)
+    return record
 
 
-    # def get_the_final_state(input_1):
-    #     """
-    #     Input_1: a list of dictionaries of marginal counts e.g: [{'1': 1046, '0': 1002}, {'1': 1001, '0': 1047}] (e.g: output of Qtic.simulate)
-    #     Return the state that corresponds to higher frequency for each qubit
-    #     """
-    #     record = []
-    #     for item in input_1:
-    #         if len(item) == 1:
-    #             record.append(int(list(item.keys())[0]))
-    #         elif item['1'] > item['0']:
-    #             record.append(1)
-    #         else:
-    #             record.append(0)
-    #     return record
-
-    def get_measured_qubit(quantum_board):
-        """
-        Args:
-            quantum_board: (an instance of the Qtic) contains information about the quantum board
-        Return:
-            a list of index for qubits that have been measured by the player
-        """
-        result = []
-        for i in range(9):
-            #result.append(i)
-            if quantum_board.check_measure(i) == "measured":
-                result.append(i)
-        return result
+def get_measured_qubit(quantum_board):
+    """
+    Args:
+        quantum_board: (an instance of the Qtic) contains information about the quantum board
+    Return:
+        a list of index for qubits that have been measured by the player
+    """
+    result = []
+    for i in range(9):
+        #result.append(i)
+        if quantum_board.check_measure(i) == "measured":
+            result.append(i)
+    return result
 
 
-    def extract_measured_states(record, measured_list):
-        """
-        Given the following input:
-            record: a list of all final states where the index of the list corresponds to the index in the quantum board
-            measured_list: a list of index for qubits that have been measured by the player
-        Return a dictionary of that maps the position that has been measured to the correspond state from record (This will be used to update the classic board)
-        """
-        result = {}
-        for index in measured_list:
-            result[str(index)] = record[index]
-        return result
+def extract_measured_states(record, measured_list):
+    """
+    Given the following input:
+        record: a list of all final states where the index of the list corresponds to the index in the quantum board
+        measured_list: a list of index for qubits that have been measured by the player
+    Return a dictionary of that maps the position that has been measured to the correspond state from record (This will be used to update the classic board)
+    """
+    result = {}
+    for index in measured_list:
+        result[str(index)] = record[index]
+    return result
 
 
 # backend_str = "ionq.qpu"
