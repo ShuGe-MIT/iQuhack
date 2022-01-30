@@ -417,7 +417,7 @@ def check_winner(res):
     print("this is res", res)
     def check(i,j,k):
         if res[i]==res[j]==res[k]:
-            if res[0]=="o":
+            if res[i]==0:
                 cnts[0]+=1
             else:
                 cnts[1]+=1
