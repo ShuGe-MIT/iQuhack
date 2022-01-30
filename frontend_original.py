@@ -13,6 +13,7 @@ import pygame as pg
 import sys
 import time
 from pygame.locals import *
+from backend import *
 
 
 width = 400
@@ -359,8 +360,23 @@ def user_click():
 
 # TODO: send sequence of moves to backend
 def send(gates): 
-    print("send gates")
-    pass
+    qc = instruction(gates)
+    print('------------------------------')
+    print('This is gates: ', gates)
+    print('------------------------------')
+    mes_qb = get_measured_qubit(qc)
+    print('------------------------------')
+    print('This is mes_qb: ', mes_qb)
+    print('------------------------------')
+    result = qc.simulate(4000)
+    print('------------------------------')
+    print('This is result: ', result)
+    record = get_the_final_state(result)
+    print('------------------------------')
+    print('This is record: ', record)
+    print('------------------------------')
+
+    return record
 
 def draw_res(res): 
     for i,r in enumerate(res):
