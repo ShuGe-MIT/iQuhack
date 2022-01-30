@@ -49,6 +49,22 @@ Finally, to showcase the full range of the capabilities of quantum computation, 
 
 Each player carries an ancillary qubit, which can be used to form an EPR pair with another state on the grid and teleport an existing state to another position. Such a move would not be possible with classical bits.
 
+## Setup
+
+Our code is dependent on the following packages, which needs to be installed prior to gameplay:
+
+#### Pygame
+`
+python3 -m pip install -U pygame --user
+`
+Reference: https://www.pygame.org/wiki/GettingStarted
+
+#### Qiskit
+`
+pip install qiskit
+`
+Reference: https://qiskit.org/documentation/getting_started.html
+
 ## Gameplay
 
 Gameplay begins by running the file `main.py`, upon which the players will see an initialized board, with buttons for each action that may be performed on the qubits.
