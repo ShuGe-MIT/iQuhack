@@ -1,5 +1,6 @@
 # Qic Qac Qoe
 
+
 ## Overview
 
 We implement a quantum version of the classic two-player game, Tic Tac Toe. Our game is played on a 3x3 grid, where each square is a qubit initialized to the state:
@@ -8,25 +9,25 @@ We implement a quantum version of the classic two-player game, Tic Tac Toe. Our 
 
 One player wins with 0's, and another player wins with 1's. Upon each turn, a player may perform one of six possible moves:
 
-### 1) Measurement
+#### 1) Measurement
 
 The player measures any state on the board in the <img src="https://latex.codecogs.com/svg.image?\{|0\rangle,|1\rangle\}" title="\{|0\rangle,|1\rangle\}" /> basis. The state on the board hence collapses into the measured state. 
 
 Additionally, the player may apply single-qubit gates on a particular quantum state:
 
-### 2) Z gate
+#### 2) Z gate
 
 The player selects one qubit and applies 
 
 <img src="https://latex.codecogs.com/svg.image?\sigma_z&space;=&space;\begin{bmatrix}1&space;&&space;0&space;\\&space;0&space;&&space;-1\end{bmatrix}" title="\sigma_z = \begin{bmatrix}1 & 0 \\ 0 & -1\end{bmatrix}" />
 
-### 3) Hadamard gate
+#### 3) Hadamard gate
 
 The player selects one qubit and applies 
 
 <img src="https://latex.codecogs.com/svg.image?H&space;=&space;\frac{1}{\sqrt{2}}\begin{bmatrix}1&space;&&space;1&space;\\&space;1&space;&&space;-1\end{bmatrix}" title="H = \frac{1}{\sqrt{2}}\begin{bmatrix}1 & 1 \\ 1 & -1\end{bmatrix}" />
 
-### 4) Controlled NOT gate
+#### 4) Controlled NOT gate
 
 The player selects two qubits, and applies
 
@@ -34,13 +35,13 @@ The player selects two qubits, and applies
 
 This may result in the two states becoming entangled with each other. 
 
-### 5) SWAP gate
+#### 5) SWAP gate
 
 <img src="https://latex.codecogs.com/svg.image?SWAP&space;=&space;\begin{bmatrix}1&0&0&0\\0&0&1&0\\0&1&0&0\\0&0&0&1\end{bmatrix}" title="SWAP = \begin{bmatrix}1&0&0&0\\0&0&1&0\\0&1&0&0\\0&0&0&1\end{bmatrix}" />
 
 Finally, to showcase the full range of the capabilities of quantum computation, the player may also teleport a quantum state across the board:
 
-### 6) Quantum teleportation
+#### 6) Quantum teleportation
 
 Each player carries an ancillary qubit, which can be used to form an EPR pair with another state on the grid and teleport an existing state to another position. Such a move would not be possible with classical bits.
 
@@ -61,3 +62,6 @@ M. Nagy and N. Nagy, "Quantum Tic-Tac-Toe: A Genuine Probabilistic Approach," Ap
 
 In our project, we have extended their ideas and implemented additional gates and actions. 
 
+## About the team
+
+We are a diverse group of MIT undergraduate students studying subjects from physics to chemistry, from mathematics to computer science. We came together as a group to pursue our shared interests in quantum computing and quantum technologies. Our time at MIT has granted us the opportunity to meet and learn from leading experts in the field. These experiences have been extremely valuable and will certainly have an impact on our futures.
