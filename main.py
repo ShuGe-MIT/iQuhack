@@ -161,8 +161,8 @@ def draw_button(gate, hovered=False):
         btn_bg_color = (150, 150, 0)
     else:
         btn_bg_color = (200, 200, 0)
-    pg.draw.rect(screen, btn_bg_color, pg.Rect(btn_coords[0]+4, btn_coords[1]+4, 125, 90))
-    screen.blit(btn_img, (btn_coords[0], btn_coords[1]))
+    pg.draw.rect(screen, btn_bg_color, pg.Rect(btn_coords[0]+3, btn_coords[1]+3, 128, 93))
+    screen.blit(btn_img, (btn_coords[0]+14, btn_coords[1]))
 
 
 def clear():
