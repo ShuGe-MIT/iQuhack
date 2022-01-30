@@ -283,24 +283,22 @@ def draw_status(winner):
 	pg.display.update()
 
 def check_winner(res):
-    cnt1=0
-    cnt2=0
+    cnts=[0,0]
     def check(i,j,k):
-        nonlocal cnt1, cnt2
         if res[i]==res[j]==res[k]:
             if res[0]=="o":
-                cnt1+=1
+                cnts[0]+=1
             else:
-                cnt2+=1
+                cnts[1]+=1
     for i in range(3):
         check(i,i+3,i+3)
         check(i*3,i*3+1,i*3+2)
     check(0,4,8)
     check(2,4,6)
 
-    if cnt1==cnt2:
+    if cnts[0]==cnts[1]:
         draw_status("draw")
-    elif cnt1>cnt2:
+    elif cnts[0]>cnts[1]:
         draw_status("o")
     else:
         draw_status("x")
