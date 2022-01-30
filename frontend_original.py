@@ -17,7 +17,7 @@ from pygame.locals import *
 width = 400
 height = 400
 extraheight = 200
-textboxheight = 100
+textboxheight = 80
 fps = 15
 running_time = pg.time.Clock()
 
@@ -80,6 +80,7 @@ def game_initiating_window():
     pg.draw.line(screen, (0,0,0), (width/3 , height), (width/3 , height+extraheight), 7)
     pg.draw.line(screen, (0,0,0), (width/3*2 , height), (width/3*2 , height+extraheight), 7)
     pg.draw.line(screen, (0,0,0), (0 , height+extraheight/2), (width , height+extraheight/2), 7)
+    pg.draw.line(screen, (0, 0, 0), (0, height+extraheight), (width, height+extraheight), 9)
 
     pg.display.update()
 
@@ -92,6 +93,8 @@ def game_initiating_window():
         for t in board:
             t[0]="ox"
             t[1]= (255, 255, 255)
+    
+    update_message("Welcome to Quantum Tic Tac Toe")
 
 
     # draw_status()
@@ -163,7 +166,6 @@ def clear(gate=None):
     elif gate=="teleport":
         btn_coords = (width/4*3, height)
     pg.draw.rect(screen, (255, 255, 255), pg.Rect(btn_coords[0]+5, btn_coords[1]+5, 90, 90))
-
     pg.display.update()
 
 
@@ -348,7 +350,11 @@ def draw_res(res):
 def update_message(message):
     global message_text
     message_text=message
-    print("message_text", message_text)
+    font = pg.font.SysFont('Arial', 20)
+    text = font.render(message_text, True, (255, 105, 205))
+    text_rect = text.get_rect(center = (width/2, height+extraheight+textboxheight/2))
+    screen.blit(text, text_rect)
+    pg.display.update()
 
 def draw_status(winner):
 	
