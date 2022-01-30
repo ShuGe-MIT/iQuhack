@@ -1,12 +1,3 @@
-# READ THIS
-
-# the game sort of works, you have to add in the images for the gates
-# Also, Hieu (and Linh) still wants to measure state and we can add in swap as well to make 6 gates
-# The measured state is measured once and cannot be used after that, not even for applying gates (which makes it doable)
-# Also, board[i][1] is the color, and I am planning to represent it as a tuple rather than index of color
-# plus2o and plus2x work well, the logic of others have to improved
-# I would work on hover afterwards, once the game is working
-
 
 from matplotlib.pyplot import draw
 import pygame as pg
@@ -163,12 +154,22 @@ def draw_button(gate, hovered=False):
         btn_bg_color = (200, 200, 0)
     pg.draw.rect(screen, btn_bg_color, pg.Rect(btn_coords[0]+3, btn_coords[1]+3, 128, 93))
     screen.blit(btn_img, (btn_coords[0]+14, btn_coords[1]))
+    update_message("Choose a gate to apply")
 
+xturn = False
 
 def clear():
+    global xturn
     coords=[(0,height),(width/3, height),(width/3*2,height),(0, height+extraheight/2),(width/3, height+extraheight/2), (width/3*2 , height+extraheight/2)]
     for btn_coords in coords:
         pg.draw.rect(screen, (255, 255, 255), pg.Rect(btn_coords[0]+4, btn_coords[1]+4, 125, 90))
+    if xturn:
+        whose_turn = "X"
+        xturn = False
+    else:
+        whose_turn = "O"
+        xturn = True
+    update_message("It's "+whose_turn+"'s turn. Click on a cell")
     pg.display.update()
 
 
@@ -349,6 +350,7 @@ def user_click():
                 choice_1=-1
             else:
                 twoq_gate="cnot"
+                update_message("Choose the control qubit")
                 print("pressed cnot")
         else:
             if(x<width / 3):
