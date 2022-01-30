@@ -21,11 +21,15 @@ The player selects one qubit and applies
 
 <img src="https://latex.codecogs.com/svg.image?H&space;=&space;\frac{1}{\sqrt{2}}\begin{bmatrix}1&space;&&space;1&space;\\&space;1&space;&&space;-1\end{bmatrix}" title="H = \frac{1}{\sqrt{2}}\begin{bmatrix}1 & 1 \\ 1 & -1\end{bmatrix}" />
 
+It is represented by "plus -> O" gate in the game.
+
 #### 3) Z gate followed by Hadammard gate
 
 The player selects one qubit and applies 
 
 <img src="https://latex.codecogs.com/svg.image?H\sigma_z&space;=&space;\frac{1}{\sqrt{2}}\begin{bmatrix}1&space;&&space;-1&space;\\&space;1&space;&&space;1\end{bmatrix}" title="H\sigma_z = \frac{1}{\sqrt{2}}\begin{bmatrix}1 & -1 \\ 1 & 1\end{bmatrix}" />
+
+It is represented by "plus -> X" gate in the game.
 
 #### 4) Controlled NOT gate
 
