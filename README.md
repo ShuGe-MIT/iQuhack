@@ -1,11 +1,21 @@
 # Qic Qac Qoe - iQuHack 2022
 
-Team members: Chirag Falor, Hieu Dinh, Lauren Li, Linh Nguyen, Shu Ge
-
-
 ## Overview
 
-We implement a quantum version of the classic two-player game, Tic Tac Toe. Our game is played on a 3x3 grid, where each square is a qubit initialized to the state:
+We implement a quantum version of the classic two-player game, Tic Tac Toe. 
+
+## Installation instruction
+
+```
+pip install pygame
+pip install qiskit
+cd src
+python3 run main.py
+```
+
+## Technical Details 
+
+Our game is played on a 3x3 grid, where each square is a qubit initialized to the state:
 
 <img src="https://latex.codecogs.com/svg.image?|\psi_0\rangle=\frac{1}{\sqrt{2}}(|0\rangle&plus;|1\rangle)" title="|\psi_0\rangle=\frac{1}{\sqrt{2}}(|0\rangle+|1\rangle)" />
 
@@ -25,7 +35,7 @@ The player selects one qubit and applies
 
 It is represented by "plus -> O" gate in the game.
 
-#### 3) Z gate followed by Hadammard gate
+#### 3) Z gate followed by Hadamard gate
 
 The player selects one qubit and applies 
 
@@ -80,3 +90,5 @@ In our project, we have extended their ideas and implemented additional gates an
 ## About the team
 
 We are a diverse group of MIT undergraduate students studying subjects from physics to chemistry, from mathematics to computer science. We came together as a group to pursue our shared interests in quantum computing and quantum technologies. Our time at MIT has granted us the opportunity to meet and learn from leading experts in the field. These experiences have been extremely valuable and will certainly have an impact on our futures.
+
+Team members: Chirag Falor, Hieu Dinh, Lauren Li, Linh Nguyen, Shu Ge
