@@ -7,10 +7,11 @@ We implement a quantum version of the classic two-player game, Tic Tac Toe.
 ## Installation instruction
 
 ```
-pip install pygame
-pip install qiskit
-cd src
-python3 run main.py
+pip3 install pygame
+pip3 install qiskit
+pip3 install qiskit.aqua
+pip3 install matplotlib
+python3 main.py
 ```
 
 ## Technical Details 
