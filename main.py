@@ -418,16 +418,21 @@ def check_winner(res):
     cnts=[0,0]
     print("this is res", res)
     def check(i,j,k):
+        nonlocal cnts
         if res[i]==res[j]==res[k]:
             if res[i]==0:
                 cnts[0]+=1
+                print("0")
             else:
                 cnts[1]+=1
+                print("1")
     for i in range(3):
-        check(i,i+3,i+3)
+        check(i,i+3,i+6)
         check(i*3,i*3+1,i*3+2)
     check(0,4,8)
     check(2,4,6)
+
+    print(cnts)
 
     if cnts[0]==cnts[1]:
         print("draw")
