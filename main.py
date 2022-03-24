@@ -24,6 +24,7 @@ color=1
 choice_1=-1
 choice_2=-1
 twoq_gate=""
+measure_all=False
 
 steps=0
 gates=[]
@@ -129,7 +130,6 @@ def draw_img(index,img, color):
 
 # TBD: draw_button and clear
 def draw_button(gate, hovered=False):
-    print("draw_button", gate)
     if gate=="plus2o":
         btn_img = plus2o_img
         btn_coords = (0, height)
@@ -178,7 +178,6 @@ def plus2o(i):
     global gates, steps
     if board[i][0]=="ox" and board[i][1]==(255, 255, 255):
         board[i][0]="o"
-        print("set i to 0", board[i][0])
         draw_img(i,board[i][0], board[i][1])
         steps+=1
         gates+=[("hadamard", i)]
@@ -238,8 +237,6 @@ def flip_(state):
 def cnot(j,i):
     global color, gates, steps
     if board[i][0]!="" and board[j][0]!="":
-        print("cnot", i, j)
-        print(board[j])
         if (len(board[j][0])==1):
             if board[i][0]=="x":
                 board[j][0]=flip_(board[j][0])
@@ -258,22 +255,16 @@ def cnot(j,i):
                     draw_img(i,board[i][0], board[i][1])
                 else:
                     board[j][1]=board[i][1][:]
-            print("draw_img", board[j])
             draw_img(j,board[j][0], board[j][1])
             steps+=1
             gates+= [("cnot",i,j)]
     
 
-
-
 ## handle user click
 def user_click():
-    global choice_1, twoq_gate, choice_2
+    global choice_1, twoq_gate, choice_2, measure_all
     # get coordinates of mouse click
     x, y = pg.mouse.get_pos()
-    print("position",x,y)
-    print("choice_1", choice_1, "choice_2", choice_2)
-    print("twoq_gate", twoq_gate)
     # get column of mouse click (1-3)
     if y<height:
         if(x<width / 3):
@@ -295,10 +286,12 @@ def user_click():
             row = None
         if col!=None and row!=None:
             i=(col-1)+(row-1)*3
-            print(i)
             if not twoq_gate:
                 choice_1=i
-                if board[i]==["ox",(255,255,255)]:
+                if board[i][0]=="":
+                    draw_button("measure")
+                    measure_all=True
+                elif board[i]==["ox",(255,255,255)]:
                     # draw_img(i,board[i][0], board[i][1])
                     draw_button("plus2o")
                     draw_button("plus2x")
@@ -317,7 +310,6 @@ def user_click():
                     
             elif choice_1>=0:
                 choice_2=i
-                print("twoq",twoq_gate)
                 if twoq_gate=="teleport":
                     teleport(choice_1,choice_2)
                     clear()
@@ -338,46 +330,40 @@ def user_click():
                     twoq_gate=""
 
 
-    elif choice_1>=0:
-        if y<height+extraheight/2:
-            if(x<width / 3):
-                plus2o(choice_1)
-                clear()
-                choice_1=-1
-            elif (x<width / 3 * 2):
-                plus2x(choice_1)
-                clear()
-                choice_1=-1
+    else: 
+        if choice_1>=0:
+            if y<height+extraheight/2:
+                if(x<width / 3):
+                    plus2o(choice_1)
+                    clear()
+                    choice_1=-1
+                elif (x<width / 3 * 2):
+                    plus2x(choice_1)
+                    clear()
+                    choice_1=-1
+                else:
+                    twoq_gate="cnot"
+                    update_message("Choose the control qubit")
             else:
-                twoq_gate="cnot"
-                update_message("Choose the control qubit")
-                print("pressed cnot")
-        else:
-            if(x<width / 3):
-                twoq_gate="teleport"
-                print("click teleport")
-            elif (x<width /3*2):
-                measure(choice_1)
-                clear()
-                choice_1=-1
-            else:
-                twoq_gate="swap"
-                print("click swap")
+                if(x<width / 3):
+                    twoq_gate="teleport"
+                elif (x<width /3*2):
+                    if measure_all==True:
+                        for i in range(9):
+                            measure(i)
+                    else:
+                        measure(choice_1)
+                    clear()
+                    choice_1=-1
+                else:
+                    twoq_gate="swap"
 
 
 # TODO: send sequence of moves to backend
 def send(gates): 
     qc = instruction(gates)
-    print('------------------------------')
-    print('This is gates: ', gates)
-    print('------------------------------')
     mes_qb = get_measured_qubit(qc)
-    print('------------------------------')
-    print('This is mes_qb: ', mes_qb)
-    print('------------------------------')
     result = qc.simulate(1)
-    print('------------------------------')
-    print('This is result: ', result)
     record = get_the_final_state(result)
     print('------------------------------')
     print('This is record: ', record)
@@ -416,32 +402,24 @@ def draw_status(winner):
 
 def check_winner(res):
     cnts=[0,0]
-    print("this is res", res)
     def check(i,j,k):
         nonlocal cnts
         if res[i]==res[j]==res[k]:
             if res[i]==0:
                 cnts[0]+=1
-                print("0")
             else:
                 cnts[1]+=1
-                print("1")
     for i in range(3):
         check(i,i+3,i+6)
         check(i*3,i*3+1,i*3+2)
     check(0,4,8)
     check(2,4,6)
 
-    print(cnts)
-
     if cnts[0]==cnts[1]:
-        print("draw")
         draw_status("draw")
     elif cnts[0]>cnts[1]:
-        print("o wins")
         draw_status("o")
     else:
-        print("x wins")
         draw_status("x")
 
 
@@ -467,11 +445,9 @@ while(run):
             sys.exit()
         elif check_done() and not checked:
             res=send(gates)
-            print("this is res", res)
             draw_res(res)
             checked = True
         elif event.type == pg.MOUSEBUTTONDOWN:
-            print("drawing")
             user_click()
     
     pg.display.update()
