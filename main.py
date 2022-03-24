@@ -373,8 +373,12 @@ def send(gates):
     # print('------------------------------')
     # print('This is result: ', result)
     record = get_the_final_state(result)
+    nrecord = np.array(record)
+    nrecord = np.where(nrecord==1, 'X', 'O')
+    nrecord = np.reshape(nrecord, (3, 3))
     print('------------------------------')
-    print('This is the final record: ', record)
+    print('This is the final record: ')
+    print(nrecord)
     print('------------------------------')
     return record
 
@@ -401,7 +405,7 @@ def draw_status(winner):
     global draw
 
     if winner!="draw":
-        mes = winner + " wins!"
+        mes = winner.upper() + " wins!"
     else:
         mes = "Game Draw!"
     update_message(mes)

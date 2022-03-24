@@ -44,7 +44,7 @@ class Qtic:
         Apply Hadamard gate to the state in square i
         """
         self.circuit.h([i])
-        print("Add a Haddamard to square " + str(i))
+        # print("Add a Haddamard to square " + str(i))
 
     def pauliz(self, i):
         """
@@ -52,7 +52,7 @@ class Qtic:
         Apply sigma_z to the 
         """
         self.circuit.z(i)
-        print("Add a sigma_z to square " + str(i))
+        # print("Add a sigma_z to square " + str(i))
 
     def cnot(self, i, j):
         """
@@ -60,7 +60,7 @@ class Qtic:
         j: square j in the board [from 0 to 8]
         """
         self.circuit.cx(i,j)
-        print("Add a CNOT gate to the board between " + str(i) + " and " + str(j))
+        # print("Add a CNOT gate to the board between " + str(i) + " and " + str(j))
 
     def swap(self, i, j):
         """
@@ -69,7 +69,7 @@ class Qtic:
         swaps the qubit i with the qubit j
         """
         self.circuit.swap(i,j)
-        print("Swap qubit " + str(i) + " with qubit " + str(j))
+        # print("Swap qubit " + str(i) + " with qubit " + str(j))
 
 
     def teleportation(self,i,j,m):
@@ -94,7 +94,7 @@ class Qtic:
         self.circuit.barrier()
         self.circuit.x(j).c_if(self.circuit.clbits[m], 1) 
         self.circuit.z(j).c_if(self.circuit.clbits[i], 1)
-        print("Teleport between " + str(i) + " and " + str(j))
+        # print("Teleport between " + str(i) + " and " + str(j))
 
     def measure(self, i):
         """
@@ -103,7 +103,7 @@ class Qtic:
         classical qubit i
         """
         self.circuit.measure([j for j in i], [j for j in i])
-        print("measure the state in square " + str(i))
+        # print("measure the state in square " + str(i))
         
     def plot(self):
         """
@@ -121,7 +121,7 @@ class Qtic:
         self.measure([i for i in range(9)])
         job = execute(self.circuit, backend=self.backend, shots=1)
         #job = execute(self.circuit,backend = QuantumInstance(self.backend, shots = shot))
-        print("Successfully execute the job")
+        print("Successfully executed the job")
         result = job.result()
         marginals = [marginal_counts(result.get_counts(),[i]) for i in range(9)]  # not accounting for the last four qubits
         plot_histogram(marginals)
